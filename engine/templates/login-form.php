@@ -43,8 +43,8 @@ class login {
 				<p id="profile-name" class="profile-name-card"></p>
 				<form class="form-signin" method="POST" action="index.php">
 					<span id="reauth-email" class="reauth-email"></span>
-					<input type="text" id="inputEmail"  name="email" class="form-control" placeholder="Email address" required autofocus>
-					<input type="password" id="inputPassword" name="password" class="form-control" placeholder="Password" >
+					<input type="email" id="inputEmail"  name="email" class="form-control" placeholder="Email address" required autofocus>
+					<input type="password" id="inputPassword" name="password" class="form-control" placeholder="Password" required >
 					<div class="notice">
                     </div>
                     <div id="remember" class="checkbox">

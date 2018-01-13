@@ -21,25 +21,34 @@ class kernell {
 	function decompile($query) {
 		switch ($query[0]) {
 			case 'init' :
-				$sql = "SELECT id FROM users  WHERE token='$query[1]'";
-				$result= $this->process($sql,false,'','','');
-				if ($result->num_rows > 0) {
+				$sql = "SELECT id FROM users WHERE token = ? ";
+				$result=$this->process();
+				$prep=$result->prepare($sql);
+				$prep->bind_param('s',$query[1]);
+				$prep->execute();
+				$prep->store_result();
+				if($prep->num_rows > 0) {
+					$prep->close();
 					return true;
-				}
-				else {
+				} else {
+					$prep->close();
 					return false;
 				}
 				break;
 			case 'authorization' :
 				$pass=$this->hashPassword($query[2]);
-				$sql = "SELECT token FROM users  WHERE email='$query[1]' AND password='$pass'";
-				$result= $this->process($sql,false,'','','');
-				if ($result->num_rows > 0) {
-					while($row = $result->fetch_assoc()) {
-						$token=$row['token'];
+				$sql = "SELECT token FROM users  WHERE email= ? AND password= ?";
+				$result=$this->process();
+				$prep=$result->prepare($sql);
+				$prep->bind_param('ss',$query[1],$pass);
+				$prep->execute();
+				$prep->store_result();
+				if($prep->num_rows > 0) {
+					$prep->bind_result($token);
+					while ($prep->fetch()) {
+						return $token;
 					}
-					return $token;
-					break;
+					$prep->close();
 				} else {
 					return false;
 				}
@@ -50,55 +59,61 @@ class kernell {
 				 $email=$query[1]['email'];
 				 $token=$this->createToken();
 				 $password=$this->hashPassword($query[1]['password']);
-				 $sql = "INSERT INTO users (id, firstname, lastname,email,password,token) VALUES(NULL,'$firstname', '$lastname','$email','$password','$token')";
-				 $result= $this->process($sql,true,'users','email',$email);
-				 if($result == 1 ) {
-				 	$_SESSION['token'] = $token;
-					 return $result;
+				 $sql = "SELECT id FROM users WHERE email = ? ";
+				 $result=$this->process();
+				 $prep=$result->prepare($sql);
+				 $prep->bind_param('s',$email);
+				 $prep->execute();
+				 $prep->store_result();
+				 if($prep->num_rows > 0) {
+					$prep->close();
+					return 'exist';
 				 } else {
-				 	return $result;
+					$sql = "INSERT INTO users (firstname, lastname,email,password,token) VALUES(?,?,?,?,?)";
+					$prep=$result->prepare($sql);
+					$prep->bind_param('sssss',$firstname,$lastname,$email,$password,$token);
+					$_SESSION['token'] = $token;
+					$prep->execute();
+					$prep->close();
+					return $result;
 				 }
 				break;
 			case 'get-users' :
-				$sql="SELECT * FROM users";
-				$result= $this->process($sql,false,'','','');
-				while($row=$result->fetch_assoc()) {
-					$user[]=$row;
+				$sql="SELECT firstname, lastname, email, date FROM users";
+				$result=$this->process();
+				$prep=$result->prepare($sql);
+				$prep->bind_param('ss',$query[1],$pass);
+				$prep->execute();
+				$prep->store_result();
+				if($prep->num_rows > 0) {
+					$users = array();
+					$prep->bind_result($firstname, $lastname, $email,$date);
+					while($prep->fetch()) {
+						$user = array();
+						$user["firstname"] = $firstname;
+						$user["lastname"] = $lastname;
+						$user["email"] = $email;
+						$user["date"] = $date;
+						array_push($users, $user);
+					}
+					$prep->close();
 				}
-				return $user;
+				return $users;
 				break;
 		}
 	}
 	function hashPassword($password) {
-		return md5($password);
+		$password= md5(md5($password).md5($password));
+		return $password;
 	}
 	function createToken() {
 		return  bin2hex(openssl_random_pseudo_bytes(16));
 	}
-	function process($sql,$check,$check_table,$check_field,$check_value) {
+	function process() {
 		$conn = new mysqli($this->server, $this->username,$this->password, $this->dbname);
 		if ($conn->connect_error) {
 			die("Connection failed: " . $conn->connect_error);
 		}
-		if($check==true) {
-			$result = $conn->query("SELECT id FROM " . $check_table . " WHERE " . $check_field . " = '" . $check_value . "'");
-			if ($result->num_rows == 0) {
-				if ($conn->query($sql) === TRUE) {
-					return true;
-				} else {
-					echo "Error: " . $sql . "<br>" . $conn->error;
-				}
-			} else {
-				return 'exist';
-			}
-		} else {
-
-		    $prep=$conn->prepare($sql);
-		    $prep->execute();
-			return $prep->get_result();
-
-		   // return $conn->query($sql);
-		}
-		$conn->close();
+		return $conn;
 	}
 }
