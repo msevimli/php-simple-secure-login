@@ -3,9 +3,9 @@ if(count(get_included_files()) ==1) exit("Direct access not permitted.");
 session_start();
 class kernell {
 	private $server = 'localhost';
-	private $username = 'root';
-	private $password = '1234';
-	private $dbname = 'simplelogin';
+	private $username = ''; // database username 
+	private $password = ''; // database password
+	private $dbname = '';  // database name
 	public function __construct() {
 		if(isset($_SESSION['token'])) {
 			$query=array('init',$_SESSION['token']);
