@@ -9,6 +9,11 @@ class control extends  kernell {
 			new registerForm(false);
 			exit;
 		}
+        if(isset($_GET['action']) && $_GET['action'] == 'logout') {
+		    unset($_SESSION['token']);
+            include_once ('templates/login-form.php');
+            exit;
+        }
 		if(isset($_POST['form-signin'])) {
 			$this->authorization($_POST['email'],$_POST['password']) == true ?
 				include_once('templates/dashboard.php') :
@@ -27,14 +32,14 @@ class control extends  kernell {
 	}
 	function checkLogin() {
 
-		if( ! isset($_SESSION['token']) || ! $this->decompile(array('init', $_SESSION['token'])) ) {
+		if( ! isset($_SESSION['token']) || ! $this->decompile(array('init', trim(strip_tags($_SESSION['token'])))) ) {
 			return false;
 		} else {
 			return true;
 		}
 	}
 	function authorization($email, $password) {
-		$token= $this->decompile(array('authorization',$email,$password));
+		$token= $this->decompile(array('authorization',trim(strip_tags($email)),trim(strip_tags($password))));
 		if($token) {
 			$_SESSION['token'] = $token;
 			return true;
@@ -44,10 +49,10 @@ class control extends  kernell {
 	}
 	function register($firstname,$lastname,$email,$password) {
 		$user=array(
-			"firstname" => $firstname,
-			"lastname"  => $lastname,
-			"email"     => $email,
-			"password"  => $password
+			"firstname" => trim(strip_tags($firstname)),
+			"lastname"  => trim(strip_tags($lastname)),
+			"email"     => trim(strip_tags($email)),
+			"password"  => trim(strip_tags($password))
 		);
 		$query=array('register',$user);
 		$result=$this->decompile($query);

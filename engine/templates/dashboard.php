@@ -27,20 +27,29 @@ class dashboard extends kernell {
                     overflow-y: scroll;
                     height: 500px;
                 }
-                .bttCover {
-                    top:0.5% !important;
-                    width: 90% !important;
-                }
+            }
+            .bttCover {
+                width: 99% !important;
+                position: relative;
+                text-align: right;
+                margin: 5px;
+                padding-right: 5px;
             }
             .algRight {
-                position: absolute;
-                right: 0;
-                top:-45px;
+                position: relative;
+
+            }
+            .logout {
+                position: relative;
             }
 		</style>
 		<div class="dashboard">
-            <button class="btn btn-warning algRight" onclick="window.location='?action=register'">Register User</button>
+
             <div id="no-more-tables">
+                <div class="bttCover">
+                    <button class="btn btn-warning algRight" onclick="window.location='?action=register'">Register User</button>
+                    <button class="btn btn-danger logout" onclick="window.location='?action=logout'">Logout</button>
+                </div>
                 <table class="col-md-12 table-bordered table-striped table-condensed cf">
                     <thead class="cf">
                     <tr>

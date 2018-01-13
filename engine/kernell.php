@@ -1,11 +1,11 @@
 <?php
 if(count(get_included_files()) ==1) exit("Direct access not permitted.");
-session_start();
+
 class kernell {
 	private $server = 'localhost';
-	private $username = ''; // database username 
-	private $password = ''; // database password
-	private $dbname = '';  // database name
+	private $username = 'root'; // database username
+	private $password = '1234'; // database password
+	private $dbname = 'simplelogin';  // database name
 	public function __construct() {
 		if(isset($_SESSION['token'])) {
 			$query=array('init',$_SESSION['token']);
@@ -92,7 +92,12 @@ class kernell {
 				return 'exist';
 			}
 		} else {
-			return $conn->query($sql);
+
+		    $prep=$conn->prepare($sql);
+		    $prep->execute();
+			return $prep->get_result();
+
+		   // return $conn->query($sql);
 		}
 		$conn->close();
 	}
