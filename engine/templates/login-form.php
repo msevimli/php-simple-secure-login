@@ -1,5 +1,5 @@
 <?php
-class login {
+class login extends  kernell {
 	public function __construct() {
 		$this->boot();
 	}
@@ -36,6 +36,11 @@ class login {
                 color:red;
                 font-size: 15px;
             }
+            .captcha {
+                margin-left: -17px;
+                position: relative;
+                transform: scale(.9);
+            }
         </style>
 		<div class="container">
 			<div class="card card-container">
@@ -52,6 +57,11 @@ class login {
 							<input type="checkbox" value="remember-me"> Remember me
 						</label>
 					</div>
+                    <?php if($this->captcha) { ?>
+                    <div class="captcha">
+                        <div class="g-recaptcha" data-sitekey="<?php echo $this->public_key; ?>"></div>
+                    </div>
+                    <?php } ?>
 					<button class="btn btn-lg btn-primary btn-block btn-signin" name="form-signin" type="submit">Sign in</button>
 				</form>
                 <button class="btn btn-lg btn-primary btn-block btn-register registerBtt" onclick="document.location='?action=register'" name ="register">Register</button>

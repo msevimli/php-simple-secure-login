@@ -1,6 +1,6 @@
 <?php
 if(count(get_included_files()) == 1) exit('direct access not permitted');
-class registerForm {
+class registerForm extends kernell {
 	public function __construct($param) {
 		$this->boot($param);
 	}
@@ -31,6 +31,11 @@ class registerForm {
                 font-size: 15px;
                 position: relative;
                 margin-bottom: 5px;
+            }
+            .captcha {
+                margin-top:-10px;
+                margin-bottom:10px;
+                position: relative;
             }
 		</style>
         <script>
@@ -67,7 +72,14 @@ class registerForm {
                         <strong>Upps :( </strong> <?php  echo $_POST['email']; ?>  is already registered in database.
                     </div>
                     <?php
+                } else if($param=='invalid') {
+                    ?>
+                    <div class="alert alert-danger">
+                        <strong>Something wrong </strong> Please try to validate captcha.
+                    </div>
+                    <?php
                 }
+
             ?>
 			<div class="panel panel-default">
 				<div class="panel-heading">
@@ -103,6 +115,11 @@ class registerForm {
 							</div>
 						</div>
                         <div class="notice"></div>
+                        <?php if($this->captcha) { ?>
+                        <div class="captcha">
+                            <div class="g-recaptcha" data-sitekey="<?php echo $this->public_key; ?>"></div>
+                        </div>
+                        <?php } ?>
 						<input type="submit" value="Register" class="btn btn-info btn-block" name="register">
 					</form>
 				</div>

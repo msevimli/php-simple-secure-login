@@ -6,6 +6,11 @@ class kernell {
 	private $username = 'root'; // database username
 	private $password = ''; // database password
 	private $dbname = 'simplelogin';  // database name
+
+    public $public_key=''; //Google recaptcha public key
+    public $private_key=''; // Google recaptcha secret key
+    public $captcha = false; // false disabled captcha validation for forms.
+
 	public function __construct() {
 		if(isset($_SESSION['token'])) {
 			$query=array('init',$_SESSION['token']);
@@ -32,6 +37,7 @@ class kernell {
 					return true;
 				} else {
 					$prep->close();
+                    $result->close();
 					return false;
 				}
 				break;
@@ -49,6 +55,7 @@ class kernell {
 						return $token;
 					}
 					$prep->close();
+                    $result->close();
 				} else {
 					return false;
 				}
@@ -75,7 +82,8 @@ class kernell {
 					$_SESSION['token'] = $token;
 					$prep->execute();
 					$prep->close();
-					return $result;
+					$result->close();
+					return 1;
 				 }
 				break;
 			case 'get-users' :
@@ -96,6 +104,7 @@ class kernell {
 						array_push($users, $user);
 					}
 					$prep->close();
+                    $result->close();
 				}
 				return $users;
 				break;
