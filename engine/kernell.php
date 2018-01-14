@@ -4,7 +4,7 @@ if(count(get_included_files()) ==1) exit("Direct access not permitted.");
 class kernell {
 	private $server = 'localhost';
 	private $username = 'root'; // database username
-	private $password = '1234'; // database password
+	private $password = ''; // database password
 	private $dbname = 'simplelogin';  // database name
 	public function __construct() {
 		if(isset($_SESSION['token'])) {
@@ -82,7 +82,6 @@ class kernell {
 				$sql="SELECT firstname, lastname, email, date FROM users";
 				$result=$this->process();
 				$prep=$result->prepare($sql);
-				$prep->bind_param('ss',$query[1],$pass);
 				$prep->execute();
 				$prep->store_result();
 				if($prep->num_rows > 0) {
