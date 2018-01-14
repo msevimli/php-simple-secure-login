@@ -9,7 +9,7 @@ class kernell {
 
     public $public_key=''; //Google recaptcha public key
     public $private_key=''; // Google recaptcha secret key
-    public $captcha = false; // false disabled captcha validation for forms.
+    public $captcha = false; // false disabled captcha validation on forms.
 
 	public function __construct() {
 		if(isset($_SESSION['token'])) {
