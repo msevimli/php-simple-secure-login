@@ -14,7 +14,7 @@ class kernell {
 	public function __construct() {
 		// Check if is session token exists
 		if(isset($_SESSION['token'])) {
-			// if it is exists, check token in datebase to validate it 
+			// if it is exists, check token in database to validate it 
 			$query=array('init',$_SESSION['token']);
 			if($this->decompile($query)==true) {
 				return;
