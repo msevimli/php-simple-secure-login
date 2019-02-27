@@ -37,7 +37,7 @@ class kernell {
 					return true;
 				} else {
 					$prep->close();
-                    $result->close();
+                    			$result->close();
 					return false;
 				}
 				break;
@@ -55,7 +55,7 @@ class kernell {
 						return $token;
 					}
 					$prep->close();
-                    $result->close();
+                    			$result->close();
 				} else {
 					return false;
 				}
@@ -104,18 +104,20 @@ class kernell {
 						array_push($users, $user);
 					}
 					$prep->close();
-                    $result->close();
+                    			$result->close();
 				}
 				return $users;
 				break;
 		}
 	}
 	function hashPassword($password) {
+		// Use your own hashing methods or just leave it 
 		$password= md5(md5($password).md5($password));
 		return $password;
 	}
 	function createToken() {
-		return  bin2hex(openssl_random_pseudo_bytes(16));
+		$bits=16; // increase value to create stongest token or just live it
+		return  bin2hex(openssl_random_pseudo_bytes($bits));
 	}
 	function process() {
 		$conn = new mysqli($this->server, $this->username,$this->password, $this->dbname);
